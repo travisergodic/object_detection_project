@@ -103,19 +103,20 @@ def create_VOCdevkit(image_dir, target_dir, image_suffix, target_suffix, cls_dic
         f.write('\n'.join(image_names))
 
 
-def train_test_split(txt_path='./VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', test_ratio=0.1, seed=10): 
+def train_test_split(dir_name='./VOCdevkit/VOC2007/ImageSets/Main/', test_ratio=0.1, seed=10): 
+    assert 'trainval.txt' in os.listdir(dir_name)
     random.seed(seed)
-    with open(txt_path, 'r') as f: 
+    with open(os.path.join(dir_name, 'trainval.txt'), 'r') as f: 
         total_names = [line.strip() for line in f.readlines() if line.strip()] 
         random.shuffle(total_names)
         test_size = int(len(total_names) * test_ratio) 
         train_names = total_names[test_size:]
         test_names = total_names[:test_size]
 
-    with open('./VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'w'):
+    with open(os.path.join(dir_name, 'trainval.txt'), 'w'):
         f.write('\n'.join(train_names))   
 
-    with open('./VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'w'):
+    with open(os.path.join(dir_name, 'test.txt'), 'w'):
         f.write('\n'.join(test_names))
 
 
@@ -127,3 +128,4 @@ if __name__ == '__main__':
         '3' : 'motorcycle',
     }
     create_VOCdevkit('/content/train', '/content/train', '.png', '.txt', cls_dict)
+    train_test_split('/content/VOCdevkit/VOC2007/ImageSets/Main/')

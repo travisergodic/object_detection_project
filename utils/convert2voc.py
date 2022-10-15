@@ -2,6 +2,7 @@ import os
 import shutil
 import random 
 import cv2
+from .config import cls_dict
 
 
 def txt2xml(txt_path, xml_path, image_path, cls_dict):
@@ -123,11 +124,5 @@ def train_test_split(dir_name='./VOCdevkit/VOC2007/ImageSets/Main/', test_ratio=
 
 
 if __name__ == '__main__': 
-    cls_dict = {
-        '0': 'car',
-        '1' : 'hov',
-        '2' : 'person',
-        '3' : 'motorcycle',
-    }
     create_VOCdevkit('/content/train', '/content/train', '.png', '.txt', cls_dict)
     train_test_split('/content/YOLOX/VOCdevkit/VOC2007/ImageSets/Main/')

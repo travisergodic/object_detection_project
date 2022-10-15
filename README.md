@@ -1,8 +1,8 @@
 ## 環境
 ```python
-!git clone https://github.com/travisergodic/object_detection_project.git
-%cd /content/YOLOX
 !git clone https://github.com/Megvii-BaseDetection/YOLOX.git
+%cd /content/YOLOX
+!git clone https://github.com/travisergodic/object_detection_project.git
 !pip install -U pip && pip install -r requirements.txt
 !pip install -v -e .
 ```
@@ -40,11 +40,13 @@ train_test_split('/content/YOLOX/VOCdevkit/VOC2007/ImageSets/Main/')
 !wget -O weights/yolox_s.pth https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.pth
 ```
 
-# 訓練模型
+## 訓練模型
 1. 修改 `content/YOLOX/exps/example/yolox_voc/yolox_voc_s.py` 中的配置
-  + `self.num_classes = {num_classes}`
-  + `self.max_epoch = {max_epoch}`
-  + `image_sets = [('2007', 'trainval')]`
+   + `self.num_classes = {num_classes}`
+   + `self.max_epoch = {max_epoch}`
+   + `image_sets = [('2007', 'trainval')]`
+   + `self.depth = {depth}` (視所用模型而定)
+   + `self.width = {width}` (視所用模型而定)
 2. 修改 `content/YOLOX/yolox/data/datasets/voc_classes.py` 中的類別
 3. 修改 `content/YOLOX/yolox/data/datasets/voc.py` 中的圖片後綴
 4. 執行訓練指令

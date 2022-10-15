@@ -25,7 +25,7 @@ def txt2xml(txt_path, xml_path, image_path, cls_dict):
         if s: 
             lines = s.split('\n')
         else: 
-            print(txt_path)
+            print(f'{txt_path} has no label!')
             lines = []
 
     with open(xml_path, 'w') as f:
@@ -112,11 +112,13 @@ def train_test_split(dir_name='./VOCdevkit/VOC2007/ImageSets/Main/', test_ratio=
         test_size = int(len(total_names) * test_ratio) 
         train_names = total_names[test_size:]
         test_names = total_names[:test_size]
+        print(f'Training set has {len(train_names)} of images!')
+        print(f'Testing set has {len(test_names)} of images!')
 
-    with open(os.path.join(dir_name, 'trainval.txt'), 'w'):
+    with open(os.path.join(dir_name, 'trainval.txt'), 'w') as f:
         f.write('\n'.join(train_names))   
 
-    with open(os.path.join(dir_name, 'test.txt'), 'w'):
+    with open(os.path.join(dir_name, 'test.txt'), 'w') as f:
         f.write('\n'.join(test_names))
 
 
@@ -128,4 +130,4 @@ if __name__ == '__main__':
         '3' : 'motorcycle',
     }
     create_VOCdevkit('/content/train', '/content/train', '.png', '.txt', cls_dict)
-    train_test_split('/content/VOCdevkit/VOC2007/ImageSets/Main/')
+    train_test_split('/content/YOLOX/VOCdevkit/VOC2007/ImageSets/Main/')

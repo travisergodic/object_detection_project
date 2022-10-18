@@ -3,6 +3,7 @@ import cv2
 import shutil 
 import random
 import yaml
+from tqdm import tqdm
 
 def txt_to_yolov5_format(raw_txt_path, yolov5_txt_path, image_path, digit=5): 
     image_height, image_width, _ = cv2.imread(image_path).shape
@@ -16,10 +17,11 @@ def txt_to_yolov5_format(raw_txt_path, yolov5_txt_path, image_path, digit=5):
             x_c, y_c, w, h = round(x_c, digit), round(y_c, digit), round(w, digit), round(w, digit)  
             text += ' '.join([str(cls), str(x_c), str(y_c), str(w), str(h)]) 
             text += '\n'
+     
+    with open(yolov5_txt_path, 'w') as f: 
+        f.write(text.strip())
     
-    if text: 
-        with open(yolov5_txt_path, 'w') as f: 
-            f.write(text.strip())
+    if text:
         return True
     return False
 
@@ -65,7 +67,7 @@ def create_yolov5_data(
         elif mode == 'val': 
             image_names = test_image_names
 
-        for image_name in image_names: 
+        for image_name in tqdm(image_names): 
             shutil.copyfile(
                 os.path.join(image_dir, image_name), 
                 os.path.join('./custom_data/images/', mode, image_name)
@@ -83,12 +85,11 @@ def create_yolov5_data(
             
     # create yaml file
     yaml_data = {
-        'path': './custom_data/images/',
-        'train': '/train', 
-        'val': '/val',
+        'train': './custom_data/images/train', 
+        'val': './custom_data/images/val',
         'nc': len(cls_names), 
         'names': {
-            i+1: cls_names[i] for i in range(len(cls_names))
+            i: cls_names[i] for i in range(len(cls_names))
         }
     }
     

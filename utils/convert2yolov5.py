@@ -17,8 +17,11 @@ def txt_to_yolov5_format(raw_txt_path, yolov5_txt_path, image_path, digit=5):
             text += ' '.join([str(cls), str(x_c), str(y_c), str(w), str(h)]) 
             text += '\n'
     
-    with open(yolov5_txt_path, 'w') as f: 
-        f.write(text.strip())
+    if text: 
+        with open(yolov5_txt_path, 'w') as f: 
+            f.write(text.strip())
+        return True
+    return False
 
 
 def create_yolov5_data(
@@ -51,6 +54,9 @@ def create_yolov5_data(
     test_size = int(len(image_names) * test_ratio)
     train_image_names = image_names[test_size:]
     test_image_names = image_names[:test_size]
+
+    print(f'training set has {len(train_image_names)} images!')
+    print(f'validation set has {len(test_image_names)} images!')
     
     # cp image & yolo_txt
     for mode in ['train', 'val']:
@@ -65,15 +71,18 @@ def create_yolov5_data(
                 os.path.join('./custom_data/images/', mode, image_name)
             )
 
-            txt_to_yolov5_format(
+            res = txt_to_yolov5_format(
                 os.path.join(target_dir, image_name.split('.')[0] + target_suffix), 
                 os.path.join('./custom_data/labels/', mode, image_name.split('.')[0] + '.txt'), 
                 os.path.join(image_dir, image_name), 
                 digit=5
             )
+
+            if not res: 
+                print(f'{image_name} has no object!')
             
     # create yaml file
-    data = {
+    yaml_data = {
         'path': './custom_data/images/',
         'train': '/train', 
         'val': '/val',
@@ -83,5 +92,5 @@ def create_yolov5_data(
         }
     }
     
-    with open('./data/custom_data.yaml', 'w') as f:
-        yaml.dump(data, f, Dumper=yaml.CDumper)
+    with open('./custom_data.yaml', 'w') as f:
+        yaml.dump(yaml_data, f, Dumper=yaml.CDumper)

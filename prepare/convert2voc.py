@@ -3,6 +3,8 @@ import shutil
 import random 
 import cv2
 from .config import cls_dict
+from pathlib import Path
+from tqdm import tqdm
 
 
 def txt2xml(txt_path, xml_path, image_path, cls_dict):
@@ -26,7 +28,7 @@ def txt2xml(txt_path, xml_path, image_path, cls_dict):
         if s: 
             lines = s.split('\n')
         else: 
-            print(f'{txt_path} has no label!')
+            print(f'{txt_path} has no object!')
             lines = []
 
     with open(xml_path, 'w') as f:
@@ -68,23 +70,33 @@ def txt2xml(txt_path, xml_path, image_path, cls_dict):
     return True
 
 
-def create_VOCdevkit(image_dir, target_dir, image_suffix, target_suffix, cls_dict): 
+def create_voc_data(
+    root, 
+    image_dir, 
+    target_dir, 
+    image_suffix, 
+    target_suffix, 
+    cls_dict, 
+    data_ratio, 
+    seed=10
+): 
     # create directories
-    os.mkdir('./VOCdevkit/')
-    os.mkdir('./VOCdevkit/VOC2007/')
-    os.mkdir('./VOCdevkit/VOC2007/Annotations/')
-    os.mkdir('./VOCdevkit/VOC2007/JPEGImages/')
-    os.mkdir('./VOCdevkit/VOC2007/ImageSets/')
-    os.mkdir('./VOCdevkit/VOC2007/ImageSets/Main/')
+    root = Path(root)
+    os.mkdir(root / 'VOCdevkit/')
+    os.mkdir(root /  'VOCdevkit/VOC2007/')
+    os.mkdir(root / 'VOCdevkit/VOC2007/Annotations/')
+    os.mkdir(root / 'VOCdevkit/VOC2007/JPEGImages/')
+    os.mkdir(root / 'VOCdevkit/VOC2007/ImageSets/')
+    os.mkdir(root / 'VOCdevkit/VOC2007/ImageSets/Main/')
     
     image_names = [] 
     
     # cp images & xml
-    for image_file in [file for file in os.listdir(image_dir) if file.endswith(image_suffix)]: 
+    for image_file in tqdm([file for file in os.listdir(image_dir) if file.endswith(image_suffix)]): 
         if target_suffix == '.txt': 
             res = txt2xml(
                 os.path.join(target_dir, image_file.split('.')[0] + target_suffix), 
-                os.path.join('./VOCdevkit/VOC2007/Annotations/', image_file.split('.')[0] + '.xml'), 
+                os.path.join(root / 'VOCdevkit/VOC2007/Annotations/', image_file.split('.')[0] + '.xml'), 
                 os.path.join(image_dir, image_file),
                 cls_dict
             )        
@@ -95,34 +107,38 @@ def create_VOCdevkit(image_dir, target_dir, image_suffix, target_suffix, cls_dic
         if res:
             shutil.copyfile(
                 os.path.join(image_dir, image_file), 
-                os.path.join('./VOCdevkit/VOC2007/JPEGImages/', image_file)
+                os.path.join(root/ 'VOCdevkit/VOC2007/JPEGImages/', image_file)
             )
             
         image_names.append(image_file.split('.')[0])
             
-    with open('./VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'w') as f:
-        f.write('\n'.join(image_names))
+    # train test split
+    image_names.sort()
+    random.seed(seed) 
+    random.shuffle(image_names)
 
+    train_ratio, val_ratio = data_ratio 
+    train_size, val_size = int(train_ratio * len(image_names)), int(val_ratio * len(image_names)) 
 
-def train_test_split(dir_name='./VOCdevkit/VOC2007/ImageSets/Main/', test_ratio=0.1, seed=10): 
-    assert 'trainval.txt' in os.listdir(dir_name)
-    random.seed(seed)
-    with open(os.path.join(dir_name, 'trainval.txt'), 'r') as f: 
-        total_names = [line.strip() for line in f.readlines() if line.strip()] 
-        random.shuffle(total_names)
-        test_size = int(len(total_names) * test_ratio) 
-        train_names = total_names[test_size:]
-        test_names = total_names[:test_size]
-        print(f'Training set has {len(train_names)} of images!')
-        print(f'Testing set has {len(test_names)} of images!')
+    train_image_names = image_names[:train_size]
+    test_image_names = image_names[train_size:train_size + val_size]
+    print(f'Training set has {len(train_image_names)} of images!')
+    print(f'Training set has {len(test_image_names)} of images!')
+    
 
-    with open(os.path.join(dir_name, 'trainval.txt'), 'w') as f:
-        f.write('\n'.join(train_names))   
+    with open(root / '/VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'r') as f: 
+        f.write('\n'.join(train_image_names))  
 
-    with open(os.path.join(dir_name, 'test.txt'), 'w') as f:
-        f.write('\n'.join(test_names))
+    with open(root / '/VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'r') as f: 
+        f.write('\n'.join(test_image_names))  
 
 
 if __name__ == '__main__': 
-    create_VOCdevkit('/content/train', '/content/train', '.png', '.txt', cls_dict)
-    train_test_split('/content/YOLOX/VOCdevkit/VOC2007/ImageSets/Main/')
+    create_voc_data(
+        '/content/YOLOX', 
+        '/content/train', 
+        '/content/train', 
+        '.png', '.txt', 
+        cls_dict, 
+        data_ratio=(0.9, 0.1)
+    )

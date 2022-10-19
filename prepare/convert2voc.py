@@ -2,7 +2,6 @@ import os
 import shutil
 import random 
 import cv2
-from .config import cls_dict
 from pathlib import Path
 from tqdm import tqdm
 
@@ -139,6 +138,6 @@ if __name__ == '__main__':
         '/content/train', 
         '/content/train', 
         '.png', '.txt', 
-        cls_dict, 
+        {'0': 'car', '1': 'hov', '2': 'person', '3':'motorcycle'}, 
         data_ratio=(0.9, 0.1)
     )

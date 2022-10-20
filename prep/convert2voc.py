@@ -86,7 +86,7 @@ def create_voc_data(
         while True: 
             answer = input('VOCdevkit folder exists. Do you want to remove it?[Y/N]')  
             if answer.lower() == 'y': 
-                shutil.rmtree(root)
+                shutil.rmtree(root / 'VOCdevkit')
                 break
 
             elif answer.lower() == 'n': 
@@ -136,10 +136,10 @@ def create_voc_data(
     print(f'Training set has {len(test_image_names)} of images!')
     
 
-    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'r') as f: 
+    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'w') as f: 
         f.write('\n'.join(train_image_names))  
 
-    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'r') as f: 
+    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'w') as f: 
         f.write('\n'.join(test_image_names))  
 
 

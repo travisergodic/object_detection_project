@@ -39,12 +39,22 @@ def create_yolov5_data(
 ): 
     root = Path(root)
     # create directories
+    if os.path.isdir(root / 'custom_data'):
+        while True: 
+            answer = input('custom_data folder exists. Do you want to remove it?[Y/N]')  
+            if answer.lower() == 'y': 
+                shutil.rmtree(root / 'custom_data')
+                break
+
+            elif answer.lower() == 'n': 
+                return
+
     os.mkdir(root / 'custom_data/')
     os.mkdir(root / 'custom_data/images/')
     os.mkdir(root / 'custom_data/labels/')
-    for root in [root / 'custom_data/images/', root / 'custom_data/labels/']: 
-        os.mkdir(root / 'train')
-        os.mkdir(root / 'val')
+    for path in [root / 'custom_data/images/', root / 'custom_data/labels/']: 
+        os.mkdir(path / 'train')
+        os.mkdir(path / 'val')
     
     # collect images
     image_names = []
@@ -73,6 +83,7 @@ def create_yolov5_data(
         elif mode == 'val': 
             image_names = test_image_names
 
+        print(root)
         for image_name in tqdm(image_names): 
             shutil.copyfile(
                 os.path.join(image_dir, image_name), 
@@ -91,8 +102,8 @@ def create_yolov5_data(
             
     # create yaml file
     yaml_data = {
-        'train': root / 'custom_data/images/train', 
-        'val': root / 'custom_data/images/val',
+        'train': str(root / 'custom_data/images/train'), 
+        'val': str(root / 'custom_data/images/val'),
         'nc': len(cls_names), 
         'names': {
             i: cls_names[i] for i in range(len(cls_names))

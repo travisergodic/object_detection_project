@@ -24,7 +24,7 @@ if __name__ == '__main__':
     data_format_dict = {
         'yolox': 'voc',
         'yolov5': 'yolov5',
-        'yolov6': 'voc'
+        'yolov6': 'yolov5'
     }
 
 

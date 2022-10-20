@@ -5,7 +5,7 @@ yolox_root = '/content/YOLOX/'
 yolov5_root = '/content/yolov5/'
 
 # yolov6
-yolov6_root = '/content/yolov6'
+yolov6_root = '/content/YOLOv6/'
 
 # train, val, test ratio
 train_ratio = 0.8

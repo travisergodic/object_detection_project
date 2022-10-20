@@ -1,7 +1,7 @@
 import argparse
 from config.prepare_config import *
-from prepare.convert2voc import create_voc_data
-from prepare.convert2yolov5 import create_yolov5_data
+from prep.convert2voc import create_voc_data
+from prep.convert2yolov5 import create_yolov5_data
 
 
 if __name__ == '__main__':

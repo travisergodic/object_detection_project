@@ -4,6 +4,7 @@ import random
 import cv2
 from pathlib import Path
 from tqdm import tqdm
+import shutil
 
 
 def txt2xml(txt_path, xml_path, image_path, cls_dict):
@@ -81,8 +82,18 @@ def create_voc_data(
 ): 
     # create directories
     root = Path(root)
+    if os.path.isdir(root / 'VOCdevkit'):
+        while True: 
+            answer = input('VOCdevkit folder exists. Do you want to remove it?[Y/N]')  
+            if answer.lower() == 'y': 
+                shutil.rmtree(root)
+                break
+
+            elif answer.lower() == 'n': 
+                return
+
     os.mkdir(root / 'VOCdevkit/')
-    os.mkdir(root /  'VOCdevkit/VOC2007/')
+    os.mkdir(root / 'VOCdevkit/VOC2007/')
     os.mkdir(root / 'VOCdevkit/VOC2007/Annotations/')
     os.mkdir(root / 'VOCdevkit/VOC2007/JPEGImages/')
     os.mkdir(root / 'VOCdevkit/VOC2007/ImageSets/')

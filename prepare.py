@@ -1,5 +1,5 @@
 import argparse
-from config.prepare_cfg import *
+from config.prepare_config import *
 from prepare.convert2voc import create_voc_data
 from prepare.convert2yolov5 import create_yolov5_data
 
@@ -36,7 +36,8 @@ if __name__ == '__main__':
             image_suffix=args.image_suffix,
             target_suffix=args.target_suffix,
             cls_dict={str(i):cls for i, cls in enumerate(cls_names)},
-            data_ratio=(train_ratio, val_ratio)
+            data_ratio=(train_ratio, val_ratio), 
+            seed = seed
         )
 
     elif data_format_dict[args.task.lower()] == 'yolov5': 
@@ -47,5 +48,6 @@ if __name__ == '__main__':
             image_suffix=args.image_suffix,
             target_suffix=args.target_suffix,
             cls_names=cls_names,
-            data_ratio=(train_ratio, val_ratio)
+            data_ratio=(train_ratio, val_ratio), 
+            seed = seed
         ) 

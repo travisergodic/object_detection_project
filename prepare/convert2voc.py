@@ -125,10 +125,10 @@ def create_voc_data(
     print(f'Training set has {len(test_image_names)} of images!')
     
 
-    with open(root / '/VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'r') as f: 
+    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/trainval.txt', 'r') as f: 
         f.write('\n'.join(train_image_names))  
 
-    with open(root / '/VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'r') as f: 
+    with open(root / 'VOCdevkit/VOC2007/ImageSets/Main/test.txt', 'r') as f: 
         f.write('\n'.join(test_image_names))  
 
 
@@ -139,5 +139,6 @@ if __name__ == '__main__':
         '/content/train', 
         '.png', '.txt', 
         {'0': 'car', '1': 'hov', '2': 'person', '3':'motorcycle'}, 
-        data_ratio=(0.9, 0.1)
+        data_ratio=(0.9, 0.1), 
+        seed = 10
     )
